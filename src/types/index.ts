@@ -10,7 +10,7 @@ export interface Task {
   projectId?: ID;
   status: 'todo' | 'in_progress' | 'done';
   priority: 'low' | 'medium' | 'high';
-  dueDate?: string; // YYYY-MM-DD
+  dueDate?: string;
   createdAt: Timestamp;
   completedAt?: Timestamp;
 }
@@ -40,7 +40,7 @@ export interface Transaction {
   amount: number;
   category: string;
   description?: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   createdAt: Timestamp;
 }
 
@@ -49,10 +49,39 @@ export interface Budget {
   limit: number;
 }
 
-// ---- Health ----
+// ---- Food Database ----
+export interface FoodItem {
+  id: string;
+  name: string;
+  brand?: string;
+  servingSize: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  category: 'protein' | 'grain' | 'fruit' | 'vegetable' | 'dairy' | 'snack' | 'drink' | 'meal' | 'custom';
+}
+
+export interface FoodLog {
+  id: ID;
+  foodId?: string;
+  name: string;
+  servings: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  meal: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  date: string;
+  createdAt: Timestamp;
+}
+
+// ---- Health (kept for backward compat) ----
 export interface HealthEntry {
   id: ID;
-  date: string; // YYYY-MM-DD
+  date: string;
   waterGlasses: number;
   sleepHours?: number;
   weight?: number;
@@ -62,6 +91,7 @@ export interface HealthEntry {
   workouts: Workout[];
 }
 
+// ---- Workouts ----
 export interface Workout {
   id: ID;
   type: string;
@@ -83,6 +113,100 @@ export interface ExerciseSet {
   duration?: number;
 }
 
+export interface WorkoutPlan {
+  id: ID;
+  name: string;
+  days: number[]; // 0=Sun, 1=Mon, ..., 6=Sat
+  exercises: PlannedExercise[];
+  createdAt: Timestamp;
+}
+
+export interface PlannedExercise {
+  id: ID;
+  name: string;
+  muscleGroup: string;
+  targetSets: number;
+  targetReps: number;
+  targetWeight?: number;
+}
+
+export interface WorkoutLog {
+  id: ID;
+  planId?: ID;
+  name: string;
+  exercises: LoggedExercise[];
+  duration: number;
+  struggleRating: 1 | 2 | 3 | 4 | 5;
+  energyLevel: 1 | 2 | 3 | 4 | 5;
+  notes?: string;
+  mood?: string;
+  date: string;
+  createdAt: Timestamp;
+}
+
+export interface LoggedExercise {
+  id: ID;
+  name: string;
+  sets: CompletedSet[];
+  notes?: string;
+}
+
+export interface CompletedSet {
+  reps: number;
+  weight: number;
+  rpe?: number;
+}
+
+// ---- RPG / Player Stats ----
+export interface PlayerStats {
+  level: number;
+  xp: number;
+  totalXp: number;
+  bodyScore: number;
+  streakDays: number;
+  longestStreak: number;
+  stats: {
+    strength: number;
+    endurance: number;
+    discipline: number;
+    nutrition: number;
+    recovery: number;
+    mind: number;
+  };
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlockedAt?: Timestamp;
+}
+
+// ---- Practice (Piano, etc.) ----
+export interface PracticeLog {
+  id: ID;
+  skill: string;
+  duration: number;
+  notes?: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  pieces?: string[];
+  date: string;
+  createdAt: Timestamp;
+}
+
+// ---- Daily Check-in ----
+export interface DailyCheckIn {
+  id: ID;
+  date: string;
+  mood: 1 | 2 | 3 | 4 | 5;
+  energy: 1 | 2 | 3 | 4 | 5;
+  stress: 1 | 2 | 3 | 4 | 5;
+  sleepQuality: 1 | 2 | 3 | 4 | 5;
+  quickNote?: string;
+  createdAt: Timestamp;
+}
+
 // ---- Habits ----
 export interface Habit {
   id: ID;
@@ -96,7 +220,7 @@ export interface Habit {
 
 export interface HabitLog {
   habitId: ID;
-  date: string; // YYYY-MM-DD
+  date: string;
   completed: boolean;
 }
 
@@ -149,6 +273,11 @@ export interface AppSettings {
   userName: string;
   calorieGoal: number;
   proteinGoal: number;
+  carbGoal: number;
+  fatGoal: number;
+  fiberGoal: number;
+  waterGoal: number;
+  stepsGoal: number;
   theme: 'dark' | 'midnight' | 'amoled';
   accentColor: string;
 }

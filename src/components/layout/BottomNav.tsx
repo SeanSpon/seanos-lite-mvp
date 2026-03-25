@@ -1,20 +1,14 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  CheckSquare,
-  Calendar,
-  Dumbbell,
-  MoreHorizontal,
-} from 'lucide-react';
+import { LayoutDashboard, UtensilsCrossed, Dumbbell, TrendingUp, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const tabs = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Today' },
-  { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
-  { href: '/calendar', icon: Calendar, label: 'Calendar' },
-  { href: '/health', icon: Dumbbell, label: 'Fitness' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Home' },
+  { href: '/nutrition', icon: UtensilsCrossed, label: 'Nutrition' },
+  { href: '/workouts', icon: Dumbbell, label: 'Workouts' },
+  { href: '/progress', icon: TrendingUp, label: 'Progress' },
   { href: '/habits', icon: MoreHorizontal, label: 'More' },
 ];
 
