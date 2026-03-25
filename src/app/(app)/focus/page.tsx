@@ -14,7 +14,7 @@ export default function FocusPage() {
     settings,
     sessions,
     isRunning,
-    isPaused,
+    isPaused: _isPaused,
     currentType,
     secondsRemaining,
     sessionCount,

@@ -313,9 +313,12 @@ export default function NutritionPage() {
           return (
             <GlassCard key={key} className="!p-0 overflow-hidden">
               {/* Meal Header */}
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => toggleMeal(key)}
-                className="w-full flex items-center justify-between px-4 py-3 active:bg-white/[0.02] transition-colors"
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleMeal(key); }}
+                className="w-full flex items-center justify-between px-4 py-3 active:bg-white/[0.02] transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
                   <div className={cn('flex items-center', color)}>{icon}</div>
@@ -341,7 +344,7 @@ export default function NutritionPage() {
                     <ChevronDown size={18} className="text-slate-500" />
                   </motion.div>
                 </div>
-              </button>
+              </div>
 
               {/* Meal Items */}
               <AnimatePresence initial={false}>

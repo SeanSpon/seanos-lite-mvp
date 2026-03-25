@@ -7,7 +7,7 @@ import { Modal } from '@/components/ui/Modal';
 import { FAB } from '@/components/ui/FAB';
 import { TopBar } from '@/components/layout/TopBar';
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react';
-import { cn, todayStr } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import type { Task } from '@/types';
 
 type Filter = 'all' | 'todo' | 'done';

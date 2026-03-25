@@ -5,7 +5,7 @@ import { useHealthStore } from '@/stores/useHealthStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { ProgressRing } from '@/components/ui/ProgressRing';
+// import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Modal } from '@/components/ui/Modal';
 import { FAB } from '@/components/ui/FAB';
 import { TopBar } from '@/components/layout/TopBar';
