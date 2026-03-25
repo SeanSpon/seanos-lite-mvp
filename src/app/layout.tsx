@@ -8,12 +8,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SeanOS",
-  description: "Your personal command center for everything in life",
+  title: "Balance",
+  description: "Track your nutrition, workouts, and health — all in one place",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SeanOS",
+    title: "Balance",
   },
 };
 

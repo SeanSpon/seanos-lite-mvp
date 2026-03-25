@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'SeanOS - Life Dashboard',
-    short_name: 'SeanOS',
-    description: 'Your personal command center for everything in life',
+    name: 'Balance - Life Dashboard',
+    short_name: 'Balance',
+    description: 'Track your nutrition, workouts, and health — all in one place',
     start_url: '/dashboard',
     display: 'standalone',
     background_color: '#0a0a0f',

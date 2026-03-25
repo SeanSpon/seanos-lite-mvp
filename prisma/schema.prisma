@@ -1,0 +1,566 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// USER & SETTINGS
+// ==========================================
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Settings
+  calorieGoal Int    @default(3000)
+  proteinGoal Int    @default(160)
+  carbGoal    Int    @default(375)
+  fatGoal     Int    @default(80)
+  fiberGoal   Int    @default(30)
+  waterGoal   Int    @default(8)
+  stepsGoal   Int    @default(10000)
+  theme       String @default("dark")
+  accentColor String @default("#06b6d4")
+
+  // RPG Stats
+  level         Int @default(1)
+  xp            Int @default(0)
+  totalXp       Int @default(0)
+  bodyScore     Int @default(0)
+  streakDays    Int @default(0)
+  longestStreak Int @default(0)
+  statStrength  Int @default(0)
+  statEndurance Int @default(0)
+  statDiscipline Int @default(0)
+  statNutrition Int @default(0)
+  statRecovery  Int @default(0)
+  statMind      Int @default(0)
+
+  // Relations
+  foodLogs       FoodLog[]
+  customFoods    CustomFood[]
+  workoutPlans   WorkoutPlan[]
+  workoutLogs    WorkoutLog[]
+  checkIns       DailyCheckIn[]
+  habits         Habit[]
+  habitLogs      HabitLog[]
+  goals          Goal[]
+  tasks          Task[]
+  projects       Project[]
+  journalEntries JournalEntry[]
+  focusSessions  FocusSession[]
+  practiceLogs   PracticeLog[]
+  transactions   Transaction[]
+  calendarEvents CalendarEvent[]
+  achievements   Achievement[]
+  skincareRoutines SkincareRoutine[]
+  skincareLogs     SkincareLog[]
+  schoolCourses    SchoolCourse[]
+  assignments      Assignment[]
+  workShifts       WorkShift[]
+}
+
+// ==========================================
+// FOOD & NUTRITION (like MyFitnessPal)
+// ==========================================
+
+model FoodItem {
+  id          String  @id @default(cuid())
+  name        String
+  brand       String?
+  servingSize String
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
+  fiber       Float
+  category    String  // protein, grain, fruit, vegetable, dairy, snack, drink, meal
+  barcode     String? @unique // for scanner integration later
+
+  foodLogs FoodLog[]
+
+  @@index([name])
+  @@index([category])
+  @@index([barcode])
+}
+
+model CustomFood {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+  name        String
+  brand       String?
+  servingSize String
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
+  fiber       Float
+  category    String
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+model FoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  foodItemId String?
+  foodItem  FoodItem? @relation(fields: [foodItemId], references: [id])
+  name      String   // denormalized for quick display
+  servings  Float    @default(1)
+  calories  Int
+  protein   Float
+  carbs     Float
+  fat       Float
+  fiber     Float
+  meal      String   // breakfast, lunch, dinner, snack
+  date      String   // YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@index([date])
+}
+
+// ==========================================
+// WORKOUTS & GYM (like Hevy)
+// ==========================================
+
+model WorkoutPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  days      Int[]    // 0=Sun..6=Sat
+  createdAt DateTime @default(now())
+
+  exercises PlannedExercise[]
+  logs      WorkoutLog[]
+
+  @@index([userId])
+}
+
+model PlannedExercise {
+  id           String      @id @default(cuid())
+  planId       String
+  plan         WorkoutPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name         String
+  muscleGroup  String
+  targetSets   Int
+  targetReps   Int
+  targetWeight Float?
+  sortOrder    Int         @default(0)
+
+  @@index([planId])
+}
+
+model WorkoutLog {
+  id             String      @id @default(cuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  planId         String?
+  plan           WorkoutPlan? @relation(fields: [planId], references: [id])
+  name           String
+  duration       Int         // minutes
+  struggleRating Int         // 1-5
+  energyLevel    Int         // 1-5
+  notes          String?
+  mood           String?
+  date           String      // YYYY-MM-DD
+  createdAt      DateTime    @default(now())
+
+  exercises LoggedExercise[]
+
+  @@index([userId, date])
+  @@index([date])
+}
+
+model LoggedExercise {
+  id        String     @id @default(cuid())
+  logId     String
+  log       WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  name      String
+  notes     String?
+  sortOrder Int        @default(0)
+
+  sets CompletedSet[]
+
+  @@index([logId])
+}
+
+model CompletedSet {
+  id         String         @id @default(cuid())
+  exerciseId String
+  exercise   LoggedExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  setNumber  Int
+  reps       Int
+  weight     Float
+  rpe        Float?
+
+  @@index([exerciseId])
+}
+
+// ==========================================
+// EXERCISE DATABASE (reference library)
+// ==========================================
+
+model ExerciseLibrary {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  muscleGroup String
+  equipment   String?
+  description String?
+  imageUrl    String?
+
+  @@index([muscleGroup])
+}
+
+// ==========================================
+// DAILY CHECK-IN & STATE
+// ==========================================
+
+model DailyCheckIn {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  date         String   @unique // YYYY-MM-DD, one per day
+  mood         Int      // 1-5
+  energy       Int      // 1-5
+  stress       Int      // 1-5
+  sleepQuality Int      // 1-5
+  sleepHours   Float?
+  weight       Float?
+  steps        Int?
+  waterGlasses Int      @default(0)
+  quickNote    String?
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+// ==========================================
+// HABITS
+// ==========================================
+
+model Habit {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  name       String
+  icon       String
+  color      String
+  frequency  String   // daily, weekdays, custom
+  customDays Int[]    // 0=Sun..6=Sat
+  archived   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  logs HabitLog[]
+
+  @@index([userId])
+}
+
+model HabitLog {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  habitId   String
+  habit     Habit   @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date      String  // YYYY-MM-DD
+  completed Boolean
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+}
+
+// ==========================================
+// GOALS & MILESTONES
+// ==========================================
+
+model Goal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  description String?
+  targetDate  String?
+  status      String   @default("active") // active, completed, archived
+  createdAt   DateTime @default(now())
+
+  milestones Milestone[]
+
+  @@index([userId])
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  goalId      String
+  goal        Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  title       String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  sortOrder   Int       @default(0)
+
+  @@index([goalId])
+}
+
+// ==========================================
+// TASKS & PROJECTS
+// ==========================================
+
+model Task {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+  title       String
+  description String?
+  status      String    @default("todo") // todo, in_progress, done
+  priority    String    @default("medium") // low, medium, high
+  dueDate     String?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId, status])
+  @@index([userId, dueDate])
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  color     String
+  createdAt DateTime @default(now())
+
+  tasks Task[]
+
+  @@index([userId])
+}
+
+// ==========================================
+// JOURNAL
+// ==========================================
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String?
+  content   String
+  mood      String?  // great, good, okay, bad, awful
+  tags      String[] // Postgres array
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ==========================================
+// FOCUS / POMODORO
+// ==========================================
+
+model FocusSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  duration    Int      // target seconds
+  elapsed     Int      // actual seconds
+  type        String   // work, break
+  completedAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ==========================================
+// PRACTICE (Piano, etc.)
+// ==========================================
+
+model PracticeLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  skill     String
+  duration  Int      // minutes
+  notes     String?
+  rating    Int      // 1-5
+  pieces    String[] // Postgres array
+  date      String   // YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// ==========================================
+// FINANCES
+// ==========================================
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // income, expense
+  amount      Float
+  category    String
+  description String?
+  date        String   // YYYY-MM-DD
+  createdAt   DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// ==========================================
+// CALENDAR
+// ==========================================
+
+model CalendarEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  color       String?
+  isAllDay    Boolean  @default(false)
+  recurring   String?  // none, daily, weekly, biweekly, monthly
+  createdAt   DateTime @default(now())
+
+  @@index([userId, startTime])
+}
+
+// ==========================================
+// ACHIEVEMENTS / RPG
+// ==========================================
+
+model Achievement {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  name        String
+  description String
+  icon        String
+  unlockedAt  DateTime?
+
+  @@unique([userId, name])
+}
+
+// ==========================================
+// SKINCARE & ROUTINES (new for SeanOS v2)
+// ==========================================
+
+model SkincareRoutine {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String   // "Morning Routine", "Night Routine"
+  timeOfDay String   // morning, night
+  createdAt DateTime @default(now())
+
+  steps SkincareStep[]
+
+  @@index([userId])
+}
+
+model SkincareStep {
+  id         String           @id @default(cuid())
+  routineId  String
+  routine    SkincareRoutine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  productName String
+  activeIngredient String?    // salicylic acid, tretinoin, niacinamide, etc.
+  instructions String?
+  sortOrder  Int              @default(0)
+
+  @@index([routineId])
+}
+
+model SkincareLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  date        String   // YYYY-MM-DD
+  timeOfDay   String   // morning, night
+  completed   Boolean  @default(true)
+  stepsUsed   String[] // product names used
+  skinStatus  String?  // clear, irritated, breakout, recovering
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, date, timeOfDay])
+  @@index([userId, date])
+}
+
+// ==========================================
+// SCHOOL (new for SeanOS v2)
+// ==========================================
+
+model SchoolCourse {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String   // "AP Computer Science"
+  teacher     String?
+  period      Int?     // class period/block
+  room        String?
+  color       String?
+  currentGrade Float?
+  createdAt   DateTime @default(now())
+
+  assignments Assignment[]
+
+  @@index([userId])
+}
+
+model Assignment {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  courseId       String
+  course        SchoolCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  type          String       // homework, test, quiz, project, essay
+  dueDate       String       // YYYY-MM-DD
+  status        String       @default("pending") // pending, in_progress, submitted, graded
+  grade         Float?
+  gradeWeight   Float?       // percentage weight
+  estimatedTime Int?         // minutes
+  priority      String       @default("medium") // low, medium, high, urgent
+  createdAt     DateTime     @default(now())
+  completedAt   DateTime?
+
+  @@index([userId, dueDate])
+  @@index([userId, status])
+  @@index([courseId])
+}
+
+// ==========================================
+// WORK SHIFTS (Home Depot etc.)
+// ==========================================
+
+model WorkShift {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  employer   String   @default("Home Depot")
+  date       String   // YYYY-MM-DD
+  startTime  String   // HH:MM
+  endTime    String   // HH:MM
+  hoursWorked Float?
+  stepsEstimate Int?
+  intensity  String?  // light, moderate, heavy
+  payRate    Float?
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, date])
+}
