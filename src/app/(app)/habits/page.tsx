@@ -25,7 +25,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
-const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement> & { size?: number }>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const iconMap: Record<string, any> = {
   Music, Dumbbell, Droplets, Code2, BookOpen, Timer, Target, Brain, Flame, Zap,
 };
 
