@@ -35,7 +35,7 @@ export default function HealthPage() {
   const [workoutType, setWorkoutType] = useState('push');
   const [workoutNotes, setWorkoutNotes] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const today = health();
 

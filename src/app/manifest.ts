@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Track your nutrition, workouts, and health — all in one place',
     start_url: '/dashboard',
     display: 'standalone',
-    background_color: '#0a0a0f',
-    theme_color: '#0a0a0f',
+    background_color: '#0f0f14',
+    theme_color: '#0f0f14',
     orientation: 'portrait',
     icons: [
       {

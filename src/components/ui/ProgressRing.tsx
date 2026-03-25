@@ -5,7 +5,8 @@ export function ProgressRing({
   max,
   size = 64,
   strokeWidth = 4,
-  color = '#6366f1',
+  color = '#00b4d8',
+  trackColor = 'rgba(255,255,255,0.06)',
   children,
 }: {
   value: number;
@@ -13,6 +14,7 @@ export function ProgressRing({
   size?: number;
   strokeWidth?: number;
   color?: string;
+  trackColor?: string;
   children?: React.ReactNode;
 }) {
   const radius = (size - strokeWidth) / 2;
@@ -28,7 +30,7 @@ export function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
+          stroke={trackColor}
           strokeWidth={strokeWidth}
         />
         <circle

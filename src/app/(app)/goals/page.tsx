@@ -19,7 +19,7 @@ export default function GoalsPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [newMilestone, setNewMilestone] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const handleAdd = () => {
     if (!title.trim()) return;

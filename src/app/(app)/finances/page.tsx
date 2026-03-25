@@ -44,7 +44,7 @@ export default function FinancesPage() {
   const [category, setCategory] = useState('Food');
   const [description, setDescription] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const thisMonth = new Date().toISOString().slice(0, 7);
   const monthTxns = transactions.filter((t) => t.date.startsWith(thisMonth));

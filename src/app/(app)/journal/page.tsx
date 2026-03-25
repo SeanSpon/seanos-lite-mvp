@@ -26,7 +26,7 @@ export default function JournalPage() {
   const [mood, setMood] = useState<JournalEntry['mood']>(undefined);
   const [title, setTitle] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const handleAdd = () => {
     if (!content.trim()) return;

@@ -50,7 +50,7 @@ export default function HabitsPage() {
   const [selectedIcon, setSelectedIcon] = useState('Target');
   const [selectedColor, setSelectedColor] = useState('#6366f1');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const progress = getTodayProgress();
 

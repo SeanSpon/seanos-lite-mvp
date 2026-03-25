@@ -75,7 +75,7 @@ export default function PracticePage() {
   const [notes, setNotes] = useState('');
   const [pieces, setPieces] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   // Default to first skill if none selected
   const activeSkill = selectedSkill || skills[0] || '';

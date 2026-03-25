@@ -45,7 +45,7 @@ export default function CalendarPage() {
   const [endTime, setEndTime] = useState('10:00');
   const [allDay, setAllDay] = useState(false);
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();

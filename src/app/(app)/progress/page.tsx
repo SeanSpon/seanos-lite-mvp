@@ -212,7 +212,7 @@ export default function ProgressPage() {
     day: 'numeric',
   });
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const workoutPctChange = pctChange(currentWorkouts, prevWorkouts);
   const caloriePctChange = pctChange(currentCalories, prevCalories);

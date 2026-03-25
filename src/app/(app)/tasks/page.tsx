@@ -22,7 +22,7 @@ export default function TasksPage() {
   const [dueDate, setDueDate] = useState('');
   const [projectId, setProjectId] = useState('');
 
-  if (!hydrated) return <div className="min-h-screen bg-[#0a0a0f]" />;
+  if (!hydrated) return <div className="min-h-screen bg-[#0f0f14]" />;
 
   const filtered = tasks.filter((t) => {
     if (filter === 'todo') return t.status !== 'done';

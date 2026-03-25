@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#0a0a0f",
+  themeColor: "#0f0f14",
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} dark`}>
-      <body className="font-sans bg-[#0a0a0f] text-slate-100 antialiased overflow-x-hidden">
+      <body className="font-sans bg-[#0f0f14] text-slate-100 antialiased overflow-x-hidden">
         {children}
       </body>
     </html>
