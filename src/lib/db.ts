@@ -1,19 +1,29 @@
 import { PrismaClient } from '@/generated/prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import { Pool } from '@neondatabase/serverless';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const globalForPrisma = globalThis as unknown as { prisma: InstanceType<typeof PrismaClient> };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const g = globalThis as unknown as { _dbClient: any };
 
-function createPrismaClient() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  // @ts-expect-error — PrismaNeon types expect pg.Pool but @neondatabase/serverless Pool is compatible
-  const adapter = new PrismaNeon(pool);
+function getClient() {
+  if (g._dbClient) return g._dbClient;
+
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error('DATABASE_URL is not set');
+
+  const adapter = new PrismaPg({ connectionString: url });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return new PrismaClient({ adapter } as any);
+  g._dbClient = new (PrismaClient as any)({ adapter });
+  return g._dbClient;
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
+export const prisma = new Proxy({} as InstanceType<typeof PrismaClient>, {
+  get(_target, prop: string | symbol) {
+    const client = getClient();
+    const value = client[prop];
+    if (typeof value === 'function') {
+      return value.bind(client);
+    }
+    return value;
+  },
+});
